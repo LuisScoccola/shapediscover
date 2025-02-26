@@ -1,6 +1,6 @@
 # ShapeDiscover
 
-Learn covers on geometric data with geometric and topological optimization, using the methodology of [1].
+Learn covers of geometric data with geometric and topological optimization, using the methodology of [[1]](#1).
 
 ## Installation
 
@@ -22,7 +22,8 @@ See the notebooks in the `examples` directory.
 
 ## References
 
-[1] Cover learning for large-scale topology representation. Luis Scoccola, Uzu Lim, Heather A. Harrington (2025)
+<a id="1">[1]</a> 
+*Cover learning for large-scale topology representation*. Luis Scoccola, Uzu Lim, Heather A. Harrington (2025)
 
 ## License
 
