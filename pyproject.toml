@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools >= 65.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "shapediscover"
+dynamic = ["version"]
+readme = "README.md"
+authors = [
+    { name = "Luis Scoccola", email = "luis.scoccola@gmail.com" },
+    { name = "Uzu Lim" },
+]
+maintainers = [{ name = "Luis Scoccola", email = "luis.scoccola@gmail.com" }]
+
+requires-python = ">=3.10"
+
+dependencies = [
+    "numpy",
+    "scipy",
+    "numba",
+    "matplotlib",
+    "scikit-learn",
+    "torch",
+    "umap-learn",
+    "glasbey",
+    "networkx",
+    "pyvis",
+    "torch_geometric",
+    "pandas",
+    "gudhi",
+]
+
+
+[project.optional-dependencies]
+extras = ["kmapper", "ripser", "torchvision"]
+
+[tool.setuptools.packages.find]
+include = ["shapediscover"]
