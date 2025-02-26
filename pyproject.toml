@@ -28,6 +28,7 @@ dependencies = [
     "torch_geometric",
     "pandas",
     "gudhi",
+    "fufpy",
 ]
 
 

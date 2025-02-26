@@ -1,11 +1,11 @@
 import numpy as np
 import numba as nb
 
-from .union_find import (
-    union_find_create,
-    union_find_find,
-    union_find_subset,
-    union_find_union,
+from fufpy import (
+    dynamic_partition_create,
+    dynamic_partition_representative,
+    dynamic_partition_subset,
+    dynamic_partition_union,
 )
 
 
@@ -15,7 +15,7 @@ def persistence_based_flattening(adjacency_list, vertex_filtration, threshold):
     appearances = np.argsort(vertex_filtration)[::-1]
     ranks = np.argsort(appearances)
     # contains the current clusters
-    uf = union_find_create(n_points)
+    uf = dynamic_partition_create(n_points)
     # contains the birth time of clusters that are alive
     clusters_birth = np.full(n_points, -1, dtype=float)
     clusters_died = np.full(n_points, False, dtype=bool)
@@ -89,8 +89,8 @@ def _main_loop_persistence_based_flattening(
         clusters_birth[appearances[hind]] = vertex_filtration[appearances[hind]]
         for y in flat_neighbors[neighbors_start_end[x][0] : neighbors_start_end[x][1]]:
             if ranks[y] < hind:
-                rx = union_find_find(uf, x)
-                ry = union_find_find(uf, y)
+                rx = dynamic_partition_representative(uf, x)
+                ry = dynamic_partition_representative(uf, y)
                 # if already together, there is nothing to do
                 if rx == ry:
                     continue
@@ -103,34 +103,34 @@ def _main_loop_persistence_based_flattening(
 
                     # if both have lived for more than the threshold, have them as flat clusters
                     if bx - threshold > merge_height and by - threshold > merge_height:
-                        c = union_find_subset(uf, x)
+                        c = dynamic_partition_subset(uf, x)
                         clusters[c] = current_cluster
                         births[current_cluster] = bx
                         deaths[current_cluster] = merge_height
                         sizes[current_cluster] = len(c)
                         current_cluster += 1
 
-                        c = union_find_subset(uf, y)
+                        c = dynamic_partition_subset(uf, y)
                         clusters[c] = current_cluster
                         births[current_cluster] = by
                         deaths[current_cluster] = merge_height
                         sizes[current_cluster] = len(c)
                         current_cluster += 1
 
-                        union_find_union(uf, x, y)
-                        rxy = union_find_find(uf, x)
+                        dynamic_partition_union(uf, x, y)
+                        rxy = dynamic_partition_representative(uf, x)
                         clusters_died[rxy] = True
 
                     # otherwise, merge them
                     else:
-                        union_find_union(uf, x, y)
-                        rxy = union_find_find(uf, x)
+                        dynamic_partition_union(uf, x, y)
+                        rxy = dynamic_partition_representative(uf, x)
                         clusters_birth[rxy] = max(bx, by)
 
                 # if both clusters are already dead, just merge them into a dead cluster
                 elif clusters_died[rx] and clusters_died[ry]:
-                    union_find_union(uf, x, y)
-                    rxy = union_find_find(uf, x)
+                    dynamic_partition_union(uf, x, y)
+                    rxy = dynamic_partition_representative(uf, x)
                     clusters_died[rxy] = True
                 # if only one of them is dead
                 else:
@@ -140,7 +140,7 @@ def _main_loop_persistence_based_flattening(
                         rx, ry = ry, rx
                     # if x has lived for longer than the threshold, have it as a flat cluster
                     if clusters_birth[rx] - threshold > merge_height:
-                        c = union_find_subset(uf, x)
+                        c = dynamic_partition_subset(uf, x)
                         clusters[c] = current_cluster
                         births[current_cluster] = clusters_birth[rx]
                         deaths[current_cluster] = merge_height
@@ -148,15 +148,15 @@ def _main_loop_persistence_based_flattening(
                         current_cluster += 1
 
                     # then merge the clusters into a dead cluster
-                    union_find_union(uf, x, y)
-                    rxy = union_find_find(uf, x)
+                    dynamic_partition_union(uf, x, y)
+                    rxy = dynamic_partition_representative(uf, x)
                     clusters_died[rxy] = True
 
     # go through all clusters that have been born but haven't been merged
     for x in range(n_points):
-        rx = union_find_find(uf, x)
+        rx = dynamic_partition_representative(uf, x)
         if not clusters_died[rx]:
-            c = union_find_subset(uf, x)
+            c = dynamic_partition_subset(uf, x)
             clusters[c] = current_cluster
             births[current_cluster] = clusters_birth[rx]
             deaths[current_cluster] = 0
