@@ -23,7 +23,7 @@ See the notebooks in the `examples` directory.
 ## References
 
 <a id="1">[1]</a> 
-*Cover learning for large-scale topology representation*. Luis Scoccola, Uzu Lim, Heather A. Harrington (2025)
+*Cover learning for large-scale topology representation*. Luis Scoccola, Uzu Lim, Heather A. Harrington. International Conference on Machine Learning (ICML 2025)
 
 ## License
 
