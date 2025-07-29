@@ -192,52 +192,6 @@ def fuzzy_cover_to_filtered_complex(functions, max_dimension=1):
     return FilteredComplex(simplices, births)
 
 
-# def fuzzy_cover_to_filtered_complex(functions, max_dimension=1):
-#
-#    @nb.jit(nopython=True)
-#    def _build_simplices(simplices_of_dimension, n_vertices, dimension):
-#        r = dimension + 1
-#        n = n_vertices
-#        n_simplices = simplices_of_dimension.shape[0]
-#        for k in range(n_simplices):
-#
-#            # build simplex
-#            if k == 0:
-#                simplex = np.arange(r)
-#            else:
-#                for i in range(r - 1, -1, -1):
-#                    if simplex[i] != i + n - r:
-#                        break
-#                simplex[i] += 1
-#                for j in range(i + 1, r):
-#                    simplex[j] = simplex[j - 1] + 1
-#
-#            simplices_of_dimension[k] = simplex
-#
-#    n_cover_elements = functions.shape[0]
-#
-#    births = []
-#    simplices = []
-#
-#    for dimension in range(max_dimension + 1):
-#        n_simplices = comb(n_cover_elements, dimension + 1, exact=True)
-#        simplices_of_dimension = np.zeros((n_simplices, dimension + 1), dtype=int)
-#        births_of_dimension = np.full(n_simplices, -1, dtype=float)
-#
-#        _build_simplices(simplices_of_dimension, n_cover_elements, dimension)
-#
-#        births_of_dimension = np.max(np.min(functions[simplices_of_dimension,:], axis=1), axis=1)
-#
-#        # filter out simplices that never appeared
-#        simplices_of_dimension = simplices_of_dimension[births_of_dimension != -1]
-#        births_of_dimension = births_of_dimension[births_of_dimension != -1]
-#
-#        simplices.append(simplices_of_dimension)
-#        births.append(births_of_dimension)
-#
-#    return FilteredComplex(simplices, births)
-
-
 def fuzzy_cover_from_kmeans(pointcloud, n_clusters, seed=None):
     clusterer = KMeans(n_clusters=n_clusters, n_init="auto", random_state=seed)
     clustering_labels = np.array(clusterer.fit_predict(pointcloud)).reshape(-1, 1)
@@ -248,6 +202,10 @@ def fuzzy_cover_from_kmeans(pointcloud, n_clusters, seed=None):
     clustering_as_function_to_simplex = encoder.fit_transform(clustering_labels).T
 
     return clustering_as_function_to_simplex
+
+
+#def fuzzy_cover_from_fuzzycmeans(pointcloud, n_clusters, seed=None):
+#    ...
 
 
 def standard_intersection(phi1, phi2):

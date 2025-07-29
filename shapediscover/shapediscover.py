@@ -24,7 +24,7 @@ class ShapeDiscover:
         knn=15,
         loss_weights=[1, 10, 1, 10],
         graph_algorithm="umap",
-        # either random, kmeans, or spectral_clustering
+        # either random, kmeans, spectral_clustering, or spectral_fuzzy_clustering
         initialization_algorithm="spectral_clustering",
         # either set_function, pointcloud_nn, or graph_nn
         model="set_function",
@@ -36,7 +36,12 @@ class ShapeDiscover:
         early_stop=True,
         early_stop_tolerance=1e-4,
     ):
-        if initialization_algorithm not in ["random", "kmeans", "spectral_clustering"]:
+        if initialization_algorithm not in [
+            "random",
+            "kmeans",
+            "spectral_clustering",
+            #"spectral_fuzzy_clustering",
+        ]:
             raise Exception(
                 "Initialization method not recognized", initialization_algorithm
             )
@@ -80,9 +85,12 @@ class ShapeDiscover:
     def fit(
         self,
         X,
+        y=None,
+        # TODO: the following parameters should go to __init__
         n_saved_iterations=0,
         verbose=True,
         plot_loss_curve=True,
+        # TODO: use random_state and numpyu.random.RandomState object
         seed=0,
     ):
 
@@ -124,6 +132,14 @@ class ShapeDiscover:
                 clustering = fuzzy_cover_from_kmeans(
                     laplacian_eigenmaps, n_clusters=self._n_cover, seed=seed
                 )
+            #elif self._initialization_algorithm == "spectral_fuzzy_clustering":
+            #    if not laplacian_eigenmaps:
+            #        laplacian_eigenmaps = graph.laplacian_eigenfunctions(
+            #            self._n_eigenfunctions
+            #        )
+            #    clustering = fuzzy_cover_from_fuzzycmeans(
+            #        laplacian_eigenmaps, n_clusters=self._n_cover, seed=seed
+            #    )
 
             self.initialization_precover_ = clustering
             time_end = time.time()
@@ -329,3 +345,60 @@ def model_gradient_norm(model):
 
 def simplex_to_psimplex(functions, p=2):
     return functions / torch.norm(functions, p=p, dim=0)
+
+
+class ShapeDiscoverLite:
+    def __init__(
+        self,
+        n_cover=10,
+        knn=15,
+        optimization=True,
+        regularization=10,
+        n_max_iter=500,
+        early_stop_tolerance=1e-5,
+    ):
+        n_max_iter = n_max_iter if optimization else 0
+        self._discover = ShapeDiscover(
+            n_cover=n_cover,
+            knn=knn,
+            loss_weights=[1, 0, 0, regularization],
+            n_max_iter=n_max_iter,
+            early_stop_tolerance=early_stop_tolerance,
+        )
+
+    def fit_transform(self, X, y=None):
+        self._discover.fit(X, verbose=False, plot_loss_curve=False)
+        return self._discover.cover_
+
+
+class FuzzyCoverPersistence:
+    def __init__(
+        self,
+        max_dimension=1,
+        log_rescaling=False,
+        clique_complex=False,
+        verbose=False,
+    ):
+        self._max_dimension = max_dimension
+        self._verbose = verbose
+        self._clique_complex = clique_complex
+        self._log_rescaling = log_rescaling
+
+    def fit_transform(self, X, y=None):
+        if self._clique_complex:
+            simplex_tree = fuzzy_cover_to_filtered_complex(
+                X, max_dimension=1
+            ).to_simplex_tree(log_normalization=self._log_rescaling)
+            simplex_tree.expansion(self._max_dimension + 1)
+        else:
+            simplex_tree = fuzzy_cover_to_filtered_complex(
+                X, max_dimension=self._max_dimension + 1
+            ).to_simplex_tree(log_normalization=self._log_rescaling)
+
+        gudhi_persistence_diagram = simplex_tree.persistence()
+        # persistence_diagram = [
+        #    np.array(simplex_tree.persistence_intervals_in_dimension(i))
+        #    for i in range(self._max_dimension + 1)
+        # ]
+
+        return gudhi_persistence_diagram
