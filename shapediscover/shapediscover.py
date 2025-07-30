@@ -349,6 +349,38 @@ def simplex_to_psimplex(functions, p=2):
 
 
 class ShapeDiscoverLite:
+    """
+
+    Build a fuzzy cover of a point cloud X using geometric optimization.
+
+    Parameters
+    ----------
+    n_cover : int, optional
+        Number of cover elements to use (default is 10).
+    knn : int, optional
+        Number of nearest neighbors for knn graph (default is 15).
+    regularization : float, optional
+        Geometric regularization strength for the loss function (default is 10).
+        Usual range is (1,100)
+    optimization : bool, optional
+        Whether to perform optimization (default is True).
+        Should be kept as is unless you know what you are doing.
+    n_max_iter : int, optional
+        Maximum number of optimization iterations (default is 500).
+        Should be kept as is unless you know what you are doing.
+    early_stop_tolerance : float, optional
+        Tolerance for early stopping during optimization (default is 1e-5).
+        Should be kept as is unless you know what you are doing.
+    fuzzy_clustering : bool, optional
+        Whether to use fuzzy clustering initialization (default is False).
+        Should be kept as is unless you know what you are doing.
+
+    Methods
+    -------
+    fit_transform(X, y=None)
+        Fits the model to the data X and returns the fuzzy cover.
+    """
+
     def __init__(
         self,
         n_cover=10,
@@ -375,6 +407,21 @@ class ShapeDiscoverLite:
         )
 
     def fit_transform(self, X, y=None):
+        """
+        Fits model to the input data and returns the fuzzy cover.
+
+        Parameters
+        ----------
+        X : array-like of shape (n_samples, n_features)
+            Array of points in Euclidean space of dimension n.
+        y : Ignored, optional
+            Not used, present for API consistency by convention.
+
+        Returns
+        -------
+        cover : ndarray
+            The output fuzzy cover.
+        """
         self._discover.fit(X, verbose=False, plot_loss_curve=False)
         return self._discover.cover_
 
