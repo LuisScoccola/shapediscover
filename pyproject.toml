@@ -33,7 +33,7 @@ dependencies = [
 
 
 [project.optional-dependencies]
-extras = ["kmapper", "ripser", "torchvision"]
+extras = ["kmapper", "ripser", "torchvision", "scikit-fuzzy"]
 
 [tool.setuptools.packages.find]
 include = ["shapediscover"]

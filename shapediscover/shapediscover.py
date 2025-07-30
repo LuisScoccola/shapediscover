@@ -11,6 +11,7 @@ from .parametric_fuzzy_cover import (
 from .fuzzy_cover import (
     FuzzyCoverLossFunction,
     fuzzy_cover_from_kmeans,
+    fuzzy_cover_from_fuzzycmeans,
     fuzzy_cover_to_filtered_complex,
 )
 from .weighted_graph import graph_from_pointcloud
@@ -40,7 +41,7 @@ class ShapeDiscover:
             "random",
             "kmeans",
             "spectral_clustering",
-            #"spectral_fuzzy_clustering",
+            "spectral_fuzzy_clustering",
         ]:
             raise Exception(
                 "Initialization method not recognized", initialization_algorithm
@@ -132,14 +133,14 @@ class ShapeDiscover:
                 clustering = fuzzy_cover_from_kmeans(
                     laplacian_eigenmaps, n_clusters=self._n_cover, seed=seed
                 )
-            #elif self._initialization_algorithm == "spectral_fuzzy_clustering":
-            #    if not laplacian_eigenmaps:
-            #        laplacian_eigenmaps = graph.laplacian_eigenfunctions(
-            #            self._n_eigenfunctions
-            #        )
-            #    clustering = fuzzy_cover_from_fuzzycmeans(
-            #        laplacian_eigenmaps, n_clusters=self._n_cover, seed=seed
-            #    )
+            elif self._initialization_algorithm == "spectral_fuzzy_clustering":
+                if not laplacian_eigenmaps:
+                    laplacian_eigenmaps = graph.laplacian_eigenfunctions(
+                        self._n_eigenfunctions
+                    )
+                clustering = fuzzy_cover_from_fuzzycmeans(
+                    laplacian_eigenmaps, n_clusters=self._n_cover, seed=seed
+                )
 
             self.initialization_precover_ = clustering
             time_end = time.time()
@@ -352,16 +353,23 @@ class ShapeDiscoverLite:
         self,
         n_cover=10,
         knn=15,
-        optimization=True,
         regularization=10,
+        optimization=True,
         n_max_iter=500,
         early_stop_tolerance=1e-5,
+        fuzzy_clustering=False,
     ):
         n_max_iter = n_max_iter if optimization else 0
+        initialization_algorithm = (
+            "spectral_clustering"
+            if not fuzzy_clustering
+            else "spectral_fuzzy_clustering"
+        )
         self._discover = ShapeDiscover(
             n_cover=n_cover,
             knn=knn,
             loss_weights=[1, 0, 0, regularization],
+            initialization_algorithm=initialization_algorithm,
             n_max_iter=n_max_iter,
             early_stop_tolerance=early_stop_tolerance,
         )

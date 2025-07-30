@@ -5,6 +5,7 @@ from scipy.special import comb
 from sklearn.preprocessing import OneHotEncoder, Normalizer
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
+import skfuzzy
 
 from .utils import scipy_sparse_matrix_to_torch_sparse
 from .persistence_based_clustering import persistence_based_flattening
@@ -39,7 +40,9 @@ class FuzzyCoverLossFunction:
         coboundary_matrix = scipy_sparse_matrix_to_torch_sparse(
             coboundary_matrix_scipy
         ).to(torch.float32)
-        edge_weights = torch.tensor(edge_weights_numpy, requires_grad=False).to(torch.float32)
+        edge_weights = torch.tensor(edge_weights_numpy, requires_grad=False).to(
+            torch.float32
+        )
         total_edge_weight = np.sum(edge_weights_numpy)
         adjacency_list = graph.efficient_adjacency_list()
 
@@ -204,8 +207,11 @@ def fuzzy_cover_from_kmeans(pointcloud, n_clusters, seed=None):
     return clustering_as_function_to_simplex
 
 
-#def fuzzy_cover_from_fuzzycmeans(pointcloud, n_clusters, seed=None):
-#    ...
+def fuzzy_cover_from_fuzzycmeans(pointcloud, n_clusters, seed=None):
+    _, fuzzy_clustering, _, _, _, _, _ = skfuzzy.cluster.cmeans(
+        pointcloud.T, n_clusters, 2, error=0.005, maxiter=1000, init=None
+    )
+    return simplex_to_psimplex_numpy(fuzzy_clustering,p=float("inf"))
 
 
 def standard_intersection(phi1, phi2):
