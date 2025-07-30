@@ -22,7 +22,8 @@ Some examples require extra libraries that can be installed with:
 Here are two small example using `ShapeDiscoverLite`, which is the currently recommended interface.
 See notebooks in the `examples` directory for more examples.
 
-A topological inference example.
+A topological inference example: recovering the topology of a two-dimensional sphere.
+We choose a cover with 25 elements for illustration purposes, but ShapeDiscover recovers the correct topology with as few as 5 cover elements.
 
 ```python
 from shapediscover import ShapeDiscoverLite, FuzzyCoverPersistence
@@ -38,11 +39,11 @@ gudhi.plot_persistence_barcode(persistence_diagram)
 plt.show()
 ```
 
-![Alt text](https://github.com/LuisScoccola/shapediscover/blob/main/docs/figures/sphere_barcode.pdf)
+![Alt text](https://github.com/LuisScoccola/shapediscover/blob/main/docs/figures/sphere_barcode.png)
 
-A visualization example.
+A visualization example using MNIST.
 
-```
+```python
 from shapediscvoer import plot_nerve
 
 mnist_dataset = torchvision.datasets.MNIST(root="./datasets", download=True)
