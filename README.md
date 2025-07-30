@@ -1,7 +1,7 @@
 # ShapeDiscover
 
-Learn covers of geometric data with geometric and topological optimization.
-See [[SLH, ICML25]](#1) for background on cover learning and topological inference.
+Learn covers of data with geometric and topological optimization.
+See [[SLH, ICML25]](#1) for background on _cover learning_ and _topological inference_.
 
 
 > [!Note]
@@ -22,7 +22,8 @@ Some examples require extra libraries that can be installed with:
 Here are two small example using `ShapeDiscoverLite`, which is the currently recommended interface.
 See notebooks in the `examples` directory for more examples.
 
-A topological inference example: recovering the topology of a two-dimensional sphere.
+### Topological inference
+Recovering the topology of a two-dimensional sphere.
 We choose a cover with 25 elements for illustration purposes, but ShapeDiscover recovers the correct topology with as few as 5 cover elements.
 
 ```python
@@ -41,10 +42,13 @@ plt.show()
 
 ![Alt text](https://github.com/LuisScoccola/shapediscover/blob/main/docs/figures/sphere_barcode.png)
 
-A visualization example using MNIST.
+### Visualization
+
+We visualize the MNIST handwritten digits dataset.
 
 ```python
-from shapediscvoer import plot_nerve
+from shapediscover import plot_nerve
+import torchvision
 
 mnist_dataset = torchvision.datasets.MNIST(root="./datasets", download=True)
 X = np.array([np.array(image_label[0]).flatten() for image_label in mnist_dataset])
@@ -57,7 +61,7 @@ plot_nerve(fuzzy_cover, threshold=0.8, interactive=True, max_vertex_size=0.8, la
 
 ![Alt text](https://github.com/LuisScoccola/shapediscover/blob/main/docs/figures/MNIST_nerve.png)
 
-The output cover on the left, and UMAP's two-dimensional projection on the right, for comparison.
+The output of ShapeDiscover on the left, and UMAP's two-dimensional projection on the right, for comparison.
 
 
 ## Authors
