@@ -1,6 +1,8 @@
 # ShapeDiscover
 
-Learn covers of geometric data with geometric and topological optimization, using the methodology of [[1]](#1).
+Learn covers of geometric data with geometric and topological optimization.
+See [[SLH, ICML25]](#1) for background on cover learning and topological inference.
+
 
 > [!Note]
 > Alpha version. User-facing interface is subject to breaking changes.
@@ -20,9 +22,11 @@ Some examples require extra libraries that can be installed with:
 Here are two small example using `ShapeDiscoverLite`, which is the currently recommended interface.
 See notebooks in the `examples` directory for more examples.
 
+A topological inference example.
+
 ```python
-from shapediscover import ShapeDiscoverLite, FuzzyCoverPersistence, plot_nerve
-import gudhi as gudhi
+from shapediscover import ShapeDiscoverLite, FuzzyCoverPersistence
+import gudhi
 from synthetic_data import sphere
 
 X = sphere(2000, 2)
@@ -34,7 +38,25 @@ gudhi.plot_persistence_barcode(persistence_diagram)
 plt.show()
 ```
 
+![Alt text](https://github.com/LuisScoccola/shapediscover/blob/main/docs/figures/sphere_barcode.pdf)
 
+A visualization example.
+
+```
+from shapediscvoer import plot_nerve
+
+mnist_dataset = torchvision.datasets.MNIST(root="./datasets", download=True)
+X = np.array([np.array(image_label[0]).flatten() for image_label in mnist_dataset])
+y = np.array([image_label[1] for image_label in mnist_dataset])
+
+coverer = ShapeDiscoverLite(10,regularization=40)
+fuzzy_cover = coverer.fit_transform(X)
+plot_nerve(fuzzy_cover, threshold=0.8, interactive=True, max_vertex_size=0.8, labels=y)
+```
+
+![Alt text](https://github.com/LuisScoccola/shapediscover/blob/main/docs/figures/MNIST_nerve.png)
+
+The output cover on the left, and UMAP's two-dimensional projection on the right, for comparison.
 
 
 ## Authors
@@ -43,7 +65,7 @@ plt.show()
 
 ## References
 
-<a id="1">[1]</a> 
+<a id="1">[SLH, ICML25]</a> 
 *Cover learning for large-scale topology representation*. Luis Scoccola, Uzu Lim, Heather A. Harrington. International Conference on Machine Learning (ICML 2025)
 
 ## License
