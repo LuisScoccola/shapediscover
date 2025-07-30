@@ -2,7 +2,6 @@
 
 Learn covers of data with geometric and topological optimization,
 for topological inference and visualization.
-
 See [[SLH, ICML25]](#1) for background on _cover learning_ and _topological inference_.
 
 
@@ -37,8 +36,8 @@ X = sphere(2000, 2)
 coverer = ShapeDiscoverLite(25)
 fuzzy_cover = coverer.fit_transform(X)
 
-persistence_diagram = FuzzyCoverPersistence(max_dimension=2, log_rescaling=True).fit_transform(fuzzy_cover)
-gudhi.plot_persistence_barcode(persistence_diagram)
+persistence_barcode = FuzzyCoverPersistence(max_dimension=2, log_rescaling=True).fit_transform(fuzzy_cover)
+gudhi.plot_persistence_barcode(persistence_barcode)
 plt.show()
 ```
 
