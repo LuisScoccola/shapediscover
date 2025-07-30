@@ -1,6 +1,8 @@
 # ShapeDiscover
 
-Learn covers of data with geometric and topological optimization.
+Learn covers of data with geometric and topological optimization,
+for topological inference and visualization.
+
 See [[SLH, ICML25]](#1) for background on _cover learning_ and _topological inference_.
 
 
