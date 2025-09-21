@@ -20,7 +20,7 @@ Some examples require extra libraries that can be installed with:
 
 ## Examples
 
-Here are two small example using `ShapeDiscoverLite`, which is the currently recommended interface.
+These are two small examples that use `ShapeDiscoverLite`, which is the currently recommended interface.
 See notebooks in the `examples` directory for more examples.
 
 ### Topological inference
